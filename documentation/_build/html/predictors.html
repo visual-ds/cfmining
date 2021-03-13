@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Predictor Wrapper &mdash; Counterfactual Antecedent Mining  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Criteria" href="criteria.html" />
+    <link rel="prev" title="Action Set" href="actions_set.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Counterfactual Antecedent Mining
+          
+
+          
+            
+            <img src="_static/vds.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Model-agnostic algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mip_algorithms.html">Mixed-integer algorithms</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Processes organization:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="actions_set.html">Action Set</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Predictor Wrapper</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#predictor-classes">Predictor classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="criteria.html">Criteria</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Visualization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization tools</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Summary:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="summary.html">Summary</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Counterfactual Antecedent Mining</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Predictor Wrapper</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/predictors.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="predictor-wrapper">
+<h1>Predictor Wrapper<a class="headerlink" href="#predictor-wrapper" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="predictor-classes">
+<h2>Predictor classes<a class="headerlink" href="#predictor-classes" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="cfmining.predictors.GeneralClassifier">
+<em class="property">class </em><code class="sig-prename descclassname">cfmining.predictors.</code><code class="sig-name descname">GeneralClassifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classifier</span></em>, <em class="sig-param"><span class="n">X</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metric</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/predictors.html#GeneralClassifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.predictors.GeneralClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper to general type of classifer.
+It estimates the importance of the features and assume the classifier as non-monotone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier</strong> (<em>sklearn type classifer</em><em>,</em>) – General classifier with predict_proba method.</p></li>
+<li><p><strong>X</strong> (<em>numpy array</em><em>,</em>) – Input Samples</p></li>
+<li><p><strong>y</strong> (<em>numpy array</em><em>,</em>) – Output Samples.</p></li>
+<li><p><strong>metric</strong> (<em>function</em><em>,</em>) – User specific metric function to estimate importance.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>,</em>) – User defined threshold for the classification.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="cfmining.predictors.GeneralClassifier.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/predictors.html#GeneralClassifier.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.predictors.GeneralClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts if the probability is higher than threshold</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cfmining.predictors.GeneralClassifier.predict_proba">
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/predictors.html#GeneralClassifier.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.predictors.GeneralClassifier.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates probability of achieving desired classification.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="cfmining.predictors.MonotoneClassifier">
+<em class="property">class </em><code class="sig-prename descclassname">cfmining.predictors.</code><code class="sig-name descname">MonotoneClassifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classifier</span></em>, <em class="sig-param"><span class="n">X</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metric</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/predictors.html#MonotoneClassifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.predictors.MonotoneClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper to general type of classifer.
+It estimates the importance of the features and assume the classifier as monotone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier</strong> (<em>sklearn type classifer</em><em>,</em>) – General classifier with predict_proba method.</p></li>
+<li><p><strong>X</strong> (<em>numpy array</em><em>,</em>) – Input Samples</p></li>
+<li><p><strong>y</strong> (<em>numpy array</em><em>,</em>) – Output Samples.</p></li>
+<li><p><strong>metric</strong> (<em>function</em><em>,</em>) – User specific metric function to estimate importance.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>,</em>) – User defined threshold for the classification.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="cfmining.predictors.LinearClassifier">
+<em class="property">class </em><code class="sig-prename descclassname">cfmining.predictors.</code><code class="sig-name descname">LinearClassifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classifier</span></em>, <em class="sig-param"><span class="n">X</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metric</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/predictors.html#LinearClassifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.predictors.LinearClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper to linear classifers.
+Calculates the importance using the coeficients from linear classification and assume the classifier as monotone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier</strong> (<em>sklearn type classifer</em><em>,</em>) – General classifier with predict_proba method.</p></li>
+<li><p><strong>X</strong> (<em>numpy array</em><em>,</em>) – Input Samples</p></li>
+<li><p><strong>y</strong> (<em>numpy array</em><em>,</em>) – Output Samples.</p></li>
+<li><p><strong>metric</strong> (<em>function</em><em>,</em>) – User specific metric function to estimate importance.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>,</em>) – User defined threshold for the classification.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="cfmining.predictors.LinearClassifier.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/predictors.html#LinearClassifier.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.predictors.LinearClassifier.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predicts if the probability is higher than threshold</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cfmining.predictors.LinearClassifier.predict_proba">
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/predictors.html#LinearClassifier.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.predictors.LinearClassifier.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates probability of achieving desired classification.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="cfmining.predictors.TreeClassifier">
+<em class="property">class </em><code class="sig-prename descclassname">cfmining.predictors.</code><code class="sig-name descname">TreeClassifier</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classifier</span></em>, <em class="sig-param"><span class="n">X</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metric</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">use_predict_max</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">clf_type</span><span class="o">=</span><span class="default_value">'sklearn'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/predictors.html#TreeClassifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.predictors.TreeClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper tree based classifiers.
+It extracts the information from the branching to speed-up the prediction based on the reference sample.
+It estimates the importance of the features and assume the classifier as non-monotone
+but explores the structure of the tree to calculate the maximal probability of a branch in the optimization procedure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier</strong> (<em>sklearn type classifer</em><em>,</em>) – General classifier with predict_proba method.</p></li>
+<li><p><strong>X</strong> (<em>numpy array</em><em>,</em>) – Input Samples</p></li>
+<li><p><strong>y</strong> (<em>numpy array</em><em>,</em>) – Output Samples.</p></li>
+<li><p><strong>metric</strong> (<em>function</em><em>,</em>) – User specific metric function to estimate importance.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>,</em>) – User defined threshold for the classification.</p></li>
+<li><p><strong>use_predict_max</strong> (<em>bool</em><em>,</em>) – Set if the wrapper is allowed to calculate the maximal probability of a optimization branch.</p></li>
+<li><p><strong>clf_type</strong> (<em>float</em><em> (</em><em>sklearn</em><em> or </em><em>lightgbm</em><em>)</em><em>,</em>) – Family of tree classifier.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="cfmining.predictors.TreeClassifier.predict_proba">
+<code class="sig-name descname">predict_proba</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/predictors.html#TreeClassifier.predict_proba"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.predictors.TreeClassifier.predict_proba" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates probability of achieving desired classification.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="cfmining.predictors.TreeClassifier.predict_max">
+<code class="sig-name descname">predict_max</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">fixed_vars</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/predictors.html#TreeClassifier.predict_max"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.predictors.TreeClassifier.predict_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the maximal probability of a optimization branch.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="cfmining.predictors.MonotoneTree">
+<em class="property">class </em><code class="sig-prename descclassname">cfmining.predictors.</code><code class="sig-name descname">MonotoneTree</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">classifier</span></em>, <em class="sig-param"><span class="n">X</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metric</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="o">=</span><span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">use_predict_max</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">clf_type</span><span class="o">=</span><span class="default_value">'sklearn'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/predictors.html#MonotoneTree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.predictors.MonotoneTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper tree based classifiers.
+It extracts the information from the branching to speed-up the prediction based on the reference sample.
+It estimates the importance of the features and assume the classifier as monotone it should only be used with lightgbm with monotonicity constraint.
+but explores the structure of the tree to calculate the maximal probability of a branch in the optimization procedure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier</strong> (<em>sklearn type classifer</em><em>,</em>) – General classifier with predict_proba method.</p></li>
+<li><p><strong>X</strong> (<em>numpy array</em><em>,</em>) – Input Samples</p></li>
+<li><p><strong>y</strong> (<em>numpy array</em><em>,</em>) – Output Samples.</p></li>
+<li><p><strong>metric</strong> (<em>function</em><em>,</em>) – User specific metric function to estimate importance.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>,</em>) – User defined threshold for the classification.</p></li>
+<li><p><strong>use_predict_max</strong> (<em>bool</em><em>,</em>) – Set if the wrapper is allowed to calculate the maximal probability of a optimization branch.</p></li>
+<li><p><strong>clf_type</strong> (<em>float</em><em> (</em><em>sklearn</em><em> or </em><em>lightgbm</em><em>)</em><em>,</em>) – Family of tree classifier.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="criteria.html" class="btn btn-neutral float-right" title="Criteria" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="actions_set.html" class="btn btn-neutral float-left" title="Action Set" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright Visual Data Science Lab
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

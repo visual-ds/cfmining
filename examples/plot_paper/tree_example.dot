@@ -1,0 +1,33 @@
+digraph Tree {
+node [shape=box, style="rounded", color="black", fontname=helvetica] ;
+edge [fontname=helvetica] ;
+0 [label="CriticalAccountOrLoansElsewhere <= 0.5\nsamples = 100.0%\nvalue = [0.297, 0.703]\nclass = granted"] ;
+1 [label="LoanDuration <= 16.5\nsamples = 71.6%\nvalue = [0.349, 0.651]\nclass = granted"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label="LoanAmount <= 6138.5\nsamples = 29.6%\nvalue = [0.256, 0.744]\nclass = granted"] ;
+1 -> 2 ;
+3 [label="samples = 28.8%\nvalue = [0.239, 0.761]\nclass = granted"] ;
+2 -> 3 ;
+4 [label="samples = 0.8%\nvalue = [0.857, 0.143]\nclass = denied"] ;
+2 -> 4 ;
+5 [label="SavingsAccountBalance_geq_500 <= 0.5\nsamples = 42.0%\nvalue = [0.415, 0.585]\nclass = granted"] ;
+1 -> 5 ;
+6 [label="samples = 38.7%\nvalue = [0.44, 0.56]\nclass = granted"] ;
+5 -> 6 ;
+7 [label="samples = 3.3%\nvalue = [0.133, 0.867]\nclass = granted"] ;
+5 -> 7 ;
+8 [label="OtherLoansAtBank <= 0.5\nsamples = 28.4%\nvalue = [0.164, 0.836]\nclass = granted"] ;
+0 -> 8 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+9 [label="LoanAmount <= 11496.0\nsamples = 25.1%\nvalue = [0.133, 0.867]\nclass = granted"] ;
+8 -> 9 ;
+10 [label="samples = 24.9%\nvalue = [0.125, 0.875]\nclass = granted"] ;
+9 -> 10 ;
+11 [label="samples = 0.2%\nvalue = [1.0, 0.0]\nclass = denied"] ;
+9 -> 11 ;
+12 [label="Age <= 45.0\nsamples = 3.3%\nvalue = [0.4, 0.6]\nclass = granted"] ;
+8 -> 12 ;
+13 [label="samples = 2.4%\nvalue = [0.545, 0.455]\nclass = denied"] ;
+12 -> 13 ;
+14 [label="samples = 0.9%\nvalue = [0.0, 1.0]\nclass = granted"] ;
+12 -> 14 ;
+}

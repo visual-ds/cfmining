@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Model-agnostic algorithm &mdash; Counterfactual Antecedent Mining  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Mixed-integer algorithms" href="mip_algorithms.html" />
+    <link rel="prev" title="Welcome to cfmining documentation !" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Counterfactual Antecedent Mining
+          
+
+          
+            
+            <img src="_static/vds.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Model-agnostic algorithm</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#model-agnostic-classes">Model-agnostic classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mip_algorithms.html">Mixed-integer algorithms</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Processes organization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="actions_set.html">Action Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="predictors.html">Predictor Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="criteria.html">Criteria</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Visualization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization tools</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Summary:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="summary.html">Summary</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Counterfactual Antecedent Mining</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Model-agnostic algorithm</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/algorithms.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="model-agnostic-algorithm">
+<h1>Model-agnostic algorithm<a class="headerlink" href="#model-agnostic-algorithm" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="model-agnostic-classes">
+<h2>Model-agnostic classes<a class="headerlink" href="#model-agnostic-classes" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="cfmining.algorithms.MAPOCAM">
+<em class="property">class </em><code class="sig-prename descclassname">cfmining.algorithms.</code><code class="sig-name descname">MAPOCAM</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action_set</span></em>, <em class="sig-param"><span class="n">pivot</span></em>, <em class="sig-param"><span class="n">classifier</span></em>, <em class="sig-param"><span class="n">max_changes</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">compare</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">clean_suboptimal</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">warm_solutions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">recursive</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/algorithms.html#MAPOCAM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.algorithms.MAPOCAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that finds a set of Pareto-optimal counterfactual antecedents
+using branch-and-bound based tree search.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action_set</strong> (<em>ActionSet type class</em><em>,</em>) – Contains the discretization of the features to find the counterfactual antecedents.</p></li>
+<li><p><strong>pivot</strong> (<em>numpy type array</em><em>,</em>) – Sample that had an undesired prediction that we want to find counterfactual antecedents
+that change the outcome.</p></li>
+<li><p><strong>classifier</strong> (<em>predictor.Classifier type class</em>) – Wrapper to help on finding the counterfactual antecedent.</p></li>
+<li><p><strong>max_changes</strong> (<em>int</em><em>, </em><em>optional</em><em> (</em><em>default=3</em><em>)</em>) – Maximal number of changes of a counterfactual antecedent.</p></li>
+<li><p><strong>compare</strong> (<em>criteria type class.</em>) – Class that evaluate the cost of a counterfactual antecedent.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="cfmining.algorithms.MAPOCAM.solutions">
+<code class="sig-name descname">solutions</code><a class="headerlink" href="#cfmining.algorithms.MAPOCAM.solutions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set of Pareto-optimal counterfactual antecedent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>set of numpy arrays.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>See the original paper: <a href="#id7"><span class="problematic" id="id1">[1]_</span></a>.</p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets">1</span></dt>
+<dd><p>Raimundo, M.M.; Nonato, L.G.; Poco, J.</p>
+</dd>
+</dl>
+<p>“Mining Pareto-Optimal Counterfactual Antecedents with a Branch-and-Bound Model-Agnostic Algorithm”.
+Submitted to IEEE Transactions on Knowledge and Data Engineering.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="cfmining.algorithms.Greedy">
+<em class="property">class </em><code class="sig-prename descclassname">cfmining.algorithms.</code><code class="sig-name descname">Greedy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action_set</span></em>, <em class="sig-param"><span class="n">pivot</span></em>, <em class="sig-param"><span class="n">classifier</span></em>, <em class="sig-param"><span class="n">compare</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/algorithms.html#Greedy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.algorithms.Greedy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that finds a single solution given a criterion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action_set</strong> (<em>ActionSet type class</em><em>,</em>) – Contains the discretization of the features to find the counterfactual antecedents.</p></li>
+<li><p><strong>pivot</strong> (<em>numpy type array</em><em>,</em>) – Sample that had an undesired prediction that we want to find counterfactual antecedents
+that change the outcome.</p></li>
+<li><p><strong>compare</strong> (<em>criteria type class.</em>) – Class that evaluate the cost of a counterfactual antecedent.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="cfmining.algorithms.Greedy.solution">
+<code class="sig-name descname">solution</code><a class="headerlink" href="#cfmining.algorithms.Greedy.solution" title="Permalink to this definition">¶</a></dt>
+<dd><p>A counterfactual antecedent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numpy array.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>See the original paper: <a href="#id8"><span class="problematic" id="id3">[1]_</span></a>.</p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets">1</span></dt>
+<dd><p>Raimundo, M.M.; Nonato, L.G.; Poco, J.</p>
+</dd>
+</dl>
+<p>“Mining Pareto-Optimal Counterfactual Antecedents with a Branch-and-Bound Model-Agnostic Algorithm”.
+Submitted to IEEE Transactions on Knowledge and Data Engineering.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="cfmining.algorithms.BruteForce">
+<em class="property">class </em><code class="sig-prename descclassname">cfmining.algorithms.</code><code class="sig-name descname">BruteForce</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action_set</span></em>, <em class="sig-param"><span class="n">pivot</span></em>, <em class="sig-param"><span class="n">classifier</span></em>, <em class="sig-param"><span class="n">max_changes</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">compare</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">clean_suboptimal</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">warm_solutions</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">recursive</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/algorithms.html#BruteForce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.algorithms.BruteForce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that finds a set of Pareto-optimal counterfactual antecedents using a brute force approach.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>action_set</strong> (<em>ActionSet type class</em><em>,</em>) – Contains the discretization of the features to find the counterfactual antecedents.</p></li>
+<li><p><strong>pivot</strong> (<em>numpy type array</em><em>,</em>) – Sample that had an undesired prediction that we want to find counterfactual antecedents
+that change the outcome.</p></li>
+<li><p><strong>classifier</strong> (<em>predictor.Classifier type class</em>) – Wrapper to help on finding the counterfactual antecedents.</p></li>
+<li><p><strong>max_changes</strong> (<em>int</em><em>, </em><em>optional</em><em> (</em><em>default=3</em><em>)</em>) – Maximal number of changes of a counterfactual antecedent.</p></li>
+<li><p><strong>compare</strong> (<em>criteria type class.</em>) – Class that evaluate the cost of a reccounterfactual antecedentourse.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="cfmining.algorithms.BruteForce.solutions">
+<code class="sig-name descname">solutions</code><a class="headerlink" href="#cfmining.algorithms.BruteForce.solutions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set of Pareto-optimal counterfactual antecedents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>set of numpy arrays.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>See the original paper: <a href="#id9"><span class="problematic" id="id5">[1]_</span></a>.</p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id6"><span class="brackets">1</span></dt>
+<dd><p>Raimundo, M.M.; Nonato, L.G.; Poco, J.</p>
+</dd>
+</dl>
+<p>“Mining Pareto-Optimal Counterfactual Antecedents with a Branch-and-Bound Model-Agnostic Algorithm”.
+Submitted to IEEE Transactions on Knowledge and Data Engineering.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mip_algorithms.html" class="btn btn-neutral float-right" title="Mixed-integer algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to cfmining documentation !" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright Visual Data Science Lab
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

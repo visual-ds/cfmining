@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cfmining.criteria &mdash; Counterfactual Antecedent Mining  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Counterfactual Antecedent Mining
+          
+
+          
+            
+            <img src="../../_static/vds.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.html">Model-agnostic algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mip_algorithms.html">Mixed-integer algorithms</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Processes organization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../actions_set.html">Action Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../predictors.html">Predictor Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../criteria.html">Criteria</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Visualization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../visualization.html">Visualization tools</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Summary:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../summary.html">Summary</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Counterfactual Antecedent Mining</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>cfmining.criteria</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cfmining.criteria</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@author:  Marcos M. Raimundo</span>
+<span class="sd">@email:   marcosmrai@gmail.com</span>
+<span class="sd">@license: BSD 3-clause.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="k">class</span> <span class="nc">PercentileCalculator</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Class that is capable of calculating the percentile cost</span>
+<span class="sd">    (change of the feature in percentiles).</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    X : numpy array,</span>
+<span class="sd">        Contains the samples.</span>
+<span class="sd">    action_set : ActionSet type class,</span>
+<span class="sd">        Contains the discretization of the features to find the recourses.</span>
+<span class="sd">     </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">action_set</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;ustun&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="o">==</span><span class="s1">&#39;ustun&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">X</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">action_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;X or action_set should not be None.&#39;</span>
+            <span class="k">if</span> <span class="n">action_set</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">action_set</span> <span class="o">=</span> <span class="n">action_set</span>
+            <span class="k">elif</span> <span class="n">X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">recourse.builder</span> <span class="kn">import</span> <span class="n">ActionSet</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">action_set</span> <span class="o">=</span> <span class="n">ActionSet</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">)</span>
+                
+            <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_set</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">percentile_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">percentile</span><span class="p">)</span>
+    
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">percentile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">feature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the percentile.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="o">==</span><span class="s1">&#39;ustun&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_set</span><span class="p">[</span><span class="n">feature</span><span class="p">]</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">percVec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vec</span><span class="p">):</span>
+        <span class="c1">#return self.percentile_vec(vec, self.names)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">feature</span><span class="p">)</span> <span class="k">for</span> <span class="n">feature</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">,</span> <span class="n">vec</span><span class="p">)])</span>
+
+<div class="viewcode-block" id="PercentileCriterion"><a class="viewcode-back" href="../../criteria.html#cfmining.criteria.PercentileCriterion">[docs]</a><span class="k">class</span> <span class="nc">PercentileCriterion</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Class that using the percentile calculator is capable of defining</span>
+<span class="sd">    which solution have a higher percentile cost.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    pivot : numpy array,</span>
+<span class="sd">        Sample in which we want to observe the shift and calculate the cost.</span>
+<span class="sd">    perc_calc : PercentileCalculator class,</span>
+<span class="sd">        Percentile calculator for that set of samples.     </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pivot</span><span class="p">,</span> <span class="n">perc_calc</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pivot</span> <span class="o">=</span> <span class="n">pivot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perc_calc</span> <span class="o">=</span> <span class="n">perc_calc</span>     
+        <span class="bp">self</span><span class="o">.</span><span class="n">pivotP</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perc_calc</span><span class="o">.</span><span class="n">percVec</span><span class="p">(</span><span class="n">pivot</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solution</span><span class="p">):</span>
+        <span class="n">solutionP</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perc_calc</span><span class="o">.</span><span class="n">percVec</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">solutionP</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">pivotP</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">greater_than</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_sol</span><span class="p">,</span> <span class="n">old_sol</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Order two solutions.&quot;&quot;&quot;</span>
+        <span class="n">new_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">new_sol</span><span class="p">)</span>
+        <span class="n">old_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">old_sol</span><span class="p">)</span>
+                    
+        <span class="k">return</span> <span class="n">new_obj</span><span class="o">&gt;=</span><span class="n">old_obj</span></div>
+
+<div class="viewcode-block" id="PercentileChangesCriterion"><a class="viewcode-back" href="../../criteria.html#cfmining.criteria.PercentileChangesCriterion">[docs]</a><span class="k">class</span> <span class="nc">PercentileChangesCriterion</span><span class="p">(</span><span class="n">PercentileCriterion</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class that using the percentile calculator and number of changes</span>
+<span class="sd">    is capable of defining if a solution is worse in both criteria.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    pivot : numpy array,</span>
+<span class="sd">        Sample in which we want to observe the shift and calculate the cost.</span>
+<span class="sd">    perc_calc : PercentileCalculator class,</span>
+<span class="sd">        Percentile calculator for that set of samples.     </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solution</span><span class="p">):</span>
+        <span class="n">perc</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">PercentileChangesCriterion</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">solution</span><span class="p">)</span>
+        <span class="n">changes</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">solution</span><span class="o">!=</span><span class="bp">self</span><span class="o">.</span><span class="n">pivot</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">perc</span><span class="p">,</span> <span class="n">changes</span><span class="p">])</span>
+    
+    <span class="k">def</span> <span class="nf">greater_than</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_sol</span><span class="p">,</span> <span class="n">old_sol</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Order two solutions.&quot;&quot;&quot;</span>
+        <span class="n">new_objs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">new_sol</span><span class="p">)</span>
+        <span class="n">old_objs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">old_sol</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">new_objs</span><span class="o">&gt;=</span><span class="n">old_objs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NonDomCriterion"><a class="viewcode-back" href="../../criteria.html#cfmining.criteria.NonDomCriterion">[docs]</a><span class="k">class</span> <span class="nc">NonDomCriterion</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Class that using the changes on each feature </span>
+<span class="sd">    is capable of defining if a solution had to change more in all features.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    pivot : numpy array,</span>
+<span class="sd">        Sample in which we want to observe the shift and calculate the cost.</span>
+<span class="sd">    perc_calc : PercentileCalculator class,</span>
+<span class="sd">        Percentile calculator for that set of samples.     </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direc</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">direc</span><span class="o">=</span><span class="n">direc</span>
+    
+    <span class="k">def</span> <span class="nf">greater_than</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_sol</span><span class="p">,</span> <span class="n">old_sol</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Order two solutions.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">direc</span><span class="o">*</span><span class="n">new_sol</span><span class="o">&gt;=</span><span class="bp">self</span><span class="o">.</span><span class="n">direc</span><span class="o">*</span><span class="n">old_sol</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright Visual Data Science Lab
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

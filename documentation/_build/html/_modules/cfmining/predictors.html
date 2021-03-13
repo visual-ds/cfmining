@@ -1,0 +1,626 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>cfmining.predictors &mdash; Counterfactual Antecedent Mining  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Counterfactual Antecedent Mining
+          
+
+          
+            
+            <img src="../../_static/vds.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.html">Model-agnostic algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mip_algorithms.html">Mixed-integer algorithms</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Processes organization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../actions_set.html">Action Set</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../predictors.html">Predictor Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../criteria.html">Criteria</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Visualization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../visualization.html">Visualization tools</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Summary:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../summary.html">Summary</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Counterfactual Antecedent Mining</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>cfmining.predictors</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for cfmining.predictors</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@author:  Marcos M. Raimundo</span>
+<span class="sd">@email:   marcosmrai@gmail.com</span>
+<span class="sd">@license: BSD 3-clause.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sklearn</span>
+
+<span class="k">def</span> <span class="nf">mean_plus_dev_error</span><span class="p">(</span><span class="n">y_ref</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">dev</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_ref</span><span class="o">-</span><span class="n">y_pred</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="o">+</span><span class="n">dev</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">mean_error</span><span class="p">(</span><span class="n">y_ref</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+    <span class="n">err</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">y_ref</span><span class="o">-</span><span class="n">y_pred</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">metric</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">mean_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X_rep</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+    <span class="n">newX</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">newX</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_rep</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">newX</span>
+
+<span class="k">def</span> <span class="nf">calc_imp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">individual</span><span class="p">,</span> <span class="n">clf</span><span class="p">,</span> <span class="n">action_set</span><span class="p">,</span> <span class="n">repetitions</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">X_base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">repetitions</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">grid_</span> <span class="o">=</span> <span class="n">action_set</span><span class="o">.</span><span class="n">feasible_grid</span><span class="p">(</span><span class="n">individual</span><span class="p">,</span> <span class="n">return_actions</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_percentiles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_immutable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1">#X_rep = np.array([[np.random.choice(action._grid) for action in action_set] for i in range(X_base.shape[0])])</span>
+    <span class="n">X_rep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">grid_</span><span class="p">[</span><span class="n">action</span><span class="o">.</span><span class="n">name</span><span class="p">])</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">action_set</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X_base</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
+    <span class="n">importance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">metric</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span>
+                                  <span class="n">replace</span><span class="p">(</span><span class="n">X_base</span><span class="p">,</span> <span class="n">X_rep</span><span class="p">,</span> <span class="n">col</span><span class="p">),</span>
+                                  <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_base</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">])</span>
+                           <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
+    <span class="k">return</span> <span class="n">importance</span>
+
+
+<div class="viewcode-block" id="GeneralClassifier"><a class="viewcode-back" href="../../predictors.html#cfmining.predictors.GeneralClassifier">[docs]</a><span class="k">class</span> <span class="nc">GeneralClassifier</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper to general type of classifer.</span>
+<span class="sd">    It estimates the importance of the features and assume the classifier as non-monotone.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    classifier : sklearn type classifer,</span>
+<span class="sd">        General classifier with predict_proba method.</span>
+<span class="sd">    X : numpy array,</span>
+<span class="sd">        Input Samples</span>
+<span class="sd">    y : numpy array,</span>
+<span class="sd">        Output Samples.</span>
+<span class="sd">    metric : function,</span>
+<span class="sd">        User specific metric function to estimate importance.</span>
+<span class="sd">    threshold : float,</span>
+<span class="sd">        User defined threshold for the classification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span> <span class="o">=</span> <span class="n">classifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="kn">from</span> <span class="nn">eli5.sklearn</span> <span class="kn">import</span> <span class="n">PermutationImportance</span>
+        <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span><span class="p">,</span> <span class="n">mean_absolute_error</span>
+        <span class="k">def</span> <span class="nf">deviat</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">metric</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1">#return mean_absolute_error(y, clf.predict_proba(X)[:,1])</span>
+                <span class="k">return</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">metric</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">perm</span> <span class="o">=</span> <span class="n">PermutationImportance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">deviat</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="c1">#perm = PermutationImportance(self.clf, scoring=deviat).fit(X, classifier.predict_proba(X)[:,1])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">importances</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">perm</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">feat_importance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">importances</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">monotone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    
+<div class="viewcode-block" id="GeneralClassifier.predict"><a class="viewcode-back" href="../../predictors.html#cfmining.predictors.GeneralClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predicts if the probability is higher than threshold&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&gt;=</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="GeneralClassifier.predict_proba"><a class="viewcode-back" href="../../predictors.html#cfmining.predictors.GeneralClassifier.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates probability of achieving desired classification.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">([</span><span class="n">value</span><span class="p">])[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="MonotoneClassifier"><a class="viewcode-back" href="../../predictors.html#cfmining.predictors.MonotoneClassifier">[docs]</a><span class="k">class</span> <span class="nc">MonotoneClassifier</span><span class="p">(</span><span class="n">GeneralClassifier</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper to general type of classifer.</span>
+<span class="sd">    It estimates the importance of the features and assume the classifier as monotone.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    classifier : sklearn type classifer,</span>
+<span class="sd">        General classifier with predict_proba method.</span>
+<span class="sd">    X : numpy array,</span>
+<span class="sd">        Input Samples</span>
+<span class="sd">    y : numpy array,</span>
+<span class="sd">        Output Samples.</span>
+<span class="sd">    metric : function,</span>
+<span class="sd">        User specific metric function to estimate importance.</span>
+<span class="sd">    threshold : float,</span>
+<span class="sd">        User defined threshold for the classification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">monotone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="LinearClassifier"><a class="viewcode-back" href="../../predictors.html#cfmining.predictors.LinearClassifier">[docs]</a><span class="k">class</span> <span class="nc">LinearClassifier</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper to linear classifers.</span>
+<span class="sd">    Calculates the importance using the coeficients from linear classification and assume the classifier as monotone.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    classifier : sklearn type classifer,</span>
+<span class="sd">        General classifier with predict_proba method.</span>
+<span class="sd">    X : numpy array,</span>
+<span class="sd">        Input Samples</span>
+<span class="sd">    y : numpy array,</span>
+<span class="sd">        Output Samples.</span>
+<span class="sd">    metric : function,</span>
+<span class="sd">        User specific metric function to estimate importance.</span>
+<span class="sd">    threshold : float,</span>
+<span class="sd">        User defined threshold for the classification.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span> <span class="o">=</span> <span class="n">classifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">)</span> <span class="ow">is</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">coeficients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">[</span><span class="s1">&#39;clf&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">scale_</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">coeficients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="p">[</span><span class="s1">&#39;clf&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coeficients</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">importances</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">coeficients</span><span class="o">*</span><span class="n">X</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">feat_importance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">importances</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">monotone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    
+<div class="viewcode-block" id="LinearClassifier.predict"><a class="viewcode-back" href="../../predictors.html#cfmining.predictors.LinearClassifier.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predicts if the probability is higher than threshold&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&gt;=</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="LinearClassifier.predict_proba"><a class="viewcode-back" href="../../predictors.html#cfmining.predictors.LinearClassifier.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates probability of achieving desired classification.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">([</span><span class="n">value</span><span class="p">])[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">LinearRule</span><span class="p">():</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coef</span><span class="p">,</span> <span class="n">Xtrain</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coef</span> <span class="o">=</span> <span class="n">coef</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Xtrain</span> <span class="o">=</span> <span class="n">Xtrain</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">feat_importance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">Xtrain</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">monotone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Predicts if the probability is higher than threshold&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef</span><span class="nd">@value</span><span class="o">&gt;=</span><span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+<span class="kn">from</span> <span class="nn">cfmining.predictors_utils</span> <span class="kn">import</span> <span class="n">TreeExtractor</span>
+
+<div class="viewcode-block" id="TreeClassifier"><a class="viewcode-back" href="../../predictors.html#cfmining.predictors.TreeClassifier">[docs]</a><span class="k">class</span> <span class="nc">TreeClassifier</span><span class="p">(</span><span class="n">GeneralClassifier</span><span class="p">,</span> <span class="n">TreeExtractor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper tree based classifiers.</span>
+<span class="sd">    It extracts the information from the branching to speed-up the prediction based on the reference sample.</span>
+<span class="sd">    It estimates the importance of the features and assume the classifier as non-monotone </span>
+<span class="sd">    but explores the structure of the tree to calculate the maximal probability of a branch in the optimization procedure.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    classifier : sklearn type classifer,</span>
+<span class="sd">        General classifier with predict_proba method.</span>
+<span class="sd">    X : numpy array,</span>
+<span class="sd">        Input Samples</span>
+<span class="sd">    y : numpy array,</span>
+<span class="sd">        Output Samples.</span>
+<span class="sd">    metric : function,</span>
+<span class="sd">        User specific metric function to estimate importance.</span>
+<span class="sd">    threshold : float,</span>
+<span class="sd">        User defined threshold for the classification.</span>
+<span class="sd">    use_predict_max : bool,</span>
+<span class="sd">        Set if the wrapper is allowed to calculate the maximal probability of a optimization branch.</span>
+<span class="sd">    clf_type : float (sklearn or lightgbm),</span>
+<span class="sd">        Family of tree classifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier</span><span class="p">,</span>
+                 <span class="n">X</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">use_predict_max</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clf_type</span><span class="o">=</span><span class="s1">&#39;sklearn&#39;</span><span class="p">):</span>
+ 
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">classifier</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">metric</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf</span> <span class="o">=</span> <span class="n">classifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clf_type</span> <span class="o">=</span> <span class="n">clf_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_predict_max</span> <span class="o">=</span> <span class="n">use_predict_max</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">individual</span><span class="p">,</span> <span class="n">action_set</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">action_set</span><span class="o">.</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="n">grid_</span> <span class="o">=</span> <span class="n">action_set</span><span class="o">.</span><span class="n">feasible_grid</span><span class="p">(</span><span class="n">individual</span><span class="p">,</span> <span class="n">return_actions</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_percentiles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_immutable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">grid_</span> <span class="o">=</span> <span class="p">{</span><span class="n">idx</span><span class="p">:</span><span class="n">grid_</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">grid_</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extract_tree</span><span class="p">(</span><span class="n">grid_</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TreeClassifier.predict_proba"><a class="viewcode-back" href="../../predictors.html#cfmining.predictors.TreeClassifier.predict_proba">[docs]</a>    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates probability of achieving desired classification.&quot;&quot;&quot;</span>
+        <span class="n">n_estimators</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forest</span><span class="p">)</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">leaves_tree</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forest</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="n">leaves_tree</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">leaf</span><span class="p">[</span><span class="s1">&#39;used_features&#39;</span><span class="p">]],</span> <span class="n">leaf</span><span class="p">[</span><span class="s1">&#39;used_features&#39;</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">leaf</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">]:</span>
+                        <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prediction</span><span class="o">+=</span><span class="n">leaf</span><span class="p">[</span><span class="s1">&#39;prediction&#39;</span><span class="p">]</span>
+                    <span class="k">break</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf_type</span><span class="o">==</span><span class="s1">&#39;sklearn&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">prediction</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">n_estimators</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf_type</span><span class="o">==</span><span class="s1">&#39;lightgbm&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">prediction</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TreeClassifier.predict_max"><a class="viewcode-back" href="../../predictors.html#cfmining.predictors.TreeClassifier.predict_max">[docs]</a>    <span class="k">def</span> <span class="nf">predict_max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">fixed_vars</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculates the maximal probability of a optimization branch.&quot;&quot;&quot;</span>
+        <span class="n">fixed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fixed_vars</span><span class="p">)</span>
+        <span class="n">n_estimators</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forest</span><span class="p">)</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">leaves_tree</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">forest</span><span class="p">:</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="n">leaves_tree</span><span class="p">:</span>
+                <span class="n">feat_u</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">fixed</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">leaf</span><span class="p">[</span><span class="s1">&#39;used_features&#39;</span><span class="p">]))</span>
+                <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">feat_u</span><span class="p">],</span> <span class="n">feat_u</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">leaf</span><span class="p">[</span><span class="s1">&#39;variables&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">]:</span><span class="c1"># and name in fixed_vars:</span>
+                        <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prob</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">leaf</span><span class="p">[</span><span class="s1">&#39;prediction&#39;</span><span class="p">])</span>
+            <span class="n">prediction</span><span class="o">+=</span><span class="n">prob</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf_type</span><span class="o">==</span><span class="s1">&#39;sklearn&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">prediction</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">n_estimators</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">clf_type</span><span class="o">==</span><span class="s1">&#39;lightgbm&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">prediction</span><span class="p">))</span></div></div>
+
+<div class="viewcode-block" id="MonotoneTree"><a class="viewcode-back" href="../../predictors.html#cfmining.predictors.MonotoneTree">[docs]</a><span class="k">class</span> <span class="nc">MonotoneTree</span><span class="p">(</span><span class="n">TreeClassifier</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper tree based classifiers.</span>
+<span class="sd">    It extracts the information from the branching to speed-up the prediction based on the reference sample.</span>
+<span class="sd">    It estimates the importance of the features and assume the classifier as monotone it should only be used with lightgbm with monotonicity constraint.</span>
+<span class="sd">    but explores the structure of the tree to calculate the maximal probability of a branch in the optimization procedure.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    </span>
+<span class="sd">    classifier : sklearn type classifer,</span>
+<span class="sd">        General classifier with predict_proba method.</span>
+<span class="sd">    X : numpy array,</span>
+<span class="sd">        Input Samples</span>
+<span class="sd">    y : numpy array,</span>
+<span class="sd">        Output Samples.</span>
+<span class="sd">    metric : function,</span>
+<span class="sd">        User specific metric function to estimate importance.</span>
+<span class="sd">    threshold : float,</span>
+<span class="sd">        User defined threshold for the classification.</span>
+<span class="sd">    use_predict_max : bool,</span>
+<span class="sd">        Set if the wrapper is allowed to calculate the maximal probability of a optimization branch.</span>
+<span class="sd">    clf_type : float (sklearn or lightgbm),</span>
+<span class="sd">        Family of tree classifier.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">monotone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">class TreeClassifier(GeneralClassifier):</span>
+<span class="sd">    def __init__(self, classifier, individual, action_set, </span>
+<span class="sd">                 X=None, y=None, metric=None, threshold=0.5,</span>
+<span class="sd">                 use_predict_max=False, general=None):</span>
+<span class="sd">        from actionsenum.mip_algorithms import recursive_tree_</span>
+<span class="sd"> </span>
+<span class="sd">        self.clf = classifier</span>
+<span class="sd">        self.threshold = threshold</span>
+
+<span class="sd">        self.names = list(action_set.df[&#39;name&#39;])</span>
+<span class="sd">        grid_ = action_set.feasible_grid(individual, return_actions=False, return_percentiles=False, return_immutable=True)</span>
+<span class="sd">        leaves = [recursive_tree_(tree_, self.names, grid_, 0, tree_name=i)</span>
+<span class="sd">                  for i, tree_ in enumerate(classifier.estimators_)]</span>
+
+<span class="sd">        for leaves_tree in leaves:</span>
+<span class="sd">            for leaf in leaves_tree:</span>
+<span class="sd">                leaf[&#39;variables&#39;] = {var:set(leaf[&#39;variables&#39;][var]) for var in leaf[&#39;variables&#39;]}</span>
+<span class="sd">                leaf[&#39;used_feat&#39;] = list(leaf[&#39;used_feat&#39;])[::-1]</span>
+<span class="sd">                leaf[&#39;used_idx&#39;] = [self.names.index(name) for name in leaf[&#39;used_feat&#39;]]</span>
+
+<span class="sd">        self.leaves = leaves</span>
+
+<span class="sd">        if general is not None:</span>
+<span class="sd">            self.importances = general.importances</span>
+<span class="sd">        else:</span>
+<span class="sd">            self.importances = classifier.feature_importances_</span>
+<span class="sd">        self.use_predict_max = use_predict_max</span>
+
+<span class="sd">    def predict_proba(self, value):</span>
+<span class="sd">        n_estimators = len(self.leaves)</span>
+<span class="sd">        prediction = 0</span>
+<span class="sd">        for leaves_tree in self.leaves:</span>
+<span class="sd">            for leaf in leaves_tree:</span>
+<span class="sd">                active_leaf = True</span>
+<span class="sd">                for v, name in zip(value[leaf[&#39;used_idx&#39;]], leaf[&#39;used_feat&#39;]):</span>
+<span class="sd">                    if v not in leaf[&#39;variables&#39;][name]:</span>
+<span class="sd">                        active_leaf=False</span>
+<span class="sd">                        break</span>
+<span class="sd">                if active_leaf:</span>
+<span class="sd">                    prediction+=leaf[&#39;prediction&#39;]</span>
+<span class="sd">                    break</span>
+<span class="sd">        return prediction/n_estimators</span>
+
+<span class="sd">    def predict_max(self, value, fixed_vars):</span>
+<span class="sd">        n_estimators = len(self.leaves)</span>
+<span class="sd">        prediction = 0</span>
+<span class="sd">        for leaves_tree in self.leaves:</span>
+<span class="sd">            prob = 0</span>
+<span class="sd">            for leaf in leaves_tree:</span>
+<span class="sd">                active_leaf = True</span>
+<span class="sd">                for v, idx, name in zip(value[leaf[&#39;used_idx&#39;]], leaf[&#39;used_idx&#39;], leaf[&#39;used_feat&#39;]):</span>
+<span class="sd">                    if v not in leaf[&#39;variables&#39;][name] and idx in fixed_vars:</span>
+<span class="sd">                        active_leaf=False</span>
+<span class="sd">                        break</span>
+<span class="sd">                if active_leaf:</span>
+<span class="sd">                    prob = max(prob, leaf[&#39;prediction&#39;])</span>
+<span class="sd">            prediction+=prob</span>
+<span class="sd">        #print(fixed_vars, prediction/n_estimators)</span>
+<span class="sd">        return prediction/n_estimators</span>
+
+
+<span class="sd">class TreeClassifier2(GeneralClassifier):</span>
+<span class="sd">    def __init__(self, classifier,</span>
+<span class="sd">                 X=None, y=None, metric=None, threshold=0.5,</span>
+<span class="sd">                 use_predict_max=False):</span>
+<span class="sd"> </span>
+<span class="sd">        super().__init__(classifier, X, y, metric, threshold)</span>
+<span class="sd">        self.clf = classifier</span>
+<span class="sd">        self.threshold = threshold</span>
+<span class="sd">        self.use_predict_max = use_predict_max</span>
+
+<span class="sd">    def fit(self, individual, action_set):</span>
+<span class="sd">        from actionsenum.mip_algorithms import recursive_tree_</span>
+<span class="sd">        self.names = list(action_set.df[&#39;name&#39;])</span>
+<span class="sd">        grid_ = action_set.feasible_grid(individual, return_actions=False, return_percentiles=False, return_immutable=True)</span>
+<span class="sd">        leaves = [recursive_tree_(tree_, self.names, grid_, 0, tree_name=i)</span>
+<span class="sd">                  for i, tree_ in enumerate(self.clf.estimators_)]</span>
+
+<span class="sd">        for leaves_tree in leaves:</span>
+<span class="sd">            for leaf in leaves_tree:</span>
+<span class="sd">                leaf[&#39;variables&#39;] = {var:set(leaf[&#39;variables&#39;][var]) for var in leaf[&#39;variables&#39;]}</span>
+<span class="sd">                leaf[&#39;used_feat&#39;] = set(leaf[&#39;used_feat&#39;])</span>
+<span class="sd">                leaf[&#39;used_idx&#39;] = [self.names.index(name) for name in leaf[&#39;used_feat&#39;]]</span>
+
+<span class="sd">        self.leaves = leaves</span>
+
+<span class="sd">    def predict_proba(self, value):</span>
+<span class="sd">        n_estimators = len(self.leaves)</span>
+<span class="sd">        prediction = 0</span>
+<span class="sd">        for leaves_tree in self.leaves:</span>
+<span class="sd">            for leaf in leaves_tree:</span>
+<span class="sd">                active_leaf = True</span>
+<span class="sd">                for v, name in zip(value[leaf[&#39;used_idx&#39;]], leaf[&#39;used_feat&#39;]):</span>
+<span class="sd">                    if v not in leaf[&#39;variables&#39;][name]:</span>
+<span class="sd">                        active_leaf=False</span>
+<span class="sd">                        break</span>
+<span class="sd">                if active_leaf:</span>
+<span class="sd">                    prediction+=leaf[&#39;prediction&#39;]</span>
+<span class="sd">                    break</span>
+<span class="sd">        return prediction/n_estimators</span>
+
+<span class="sd">    def predict_max(self, value, fixed_vars):</span>
+<span class="sd">        n_estimators = len(self.leaves)</span>
+<span class="sd">        prediction = 0</span>
+<span class="sd">        for leaves_tree in self.leaves:</span>
+<span class="sd">            prob = 0</span>
+<span class="sd">            for leaf in leaves_tree:</span>
+<span class="sd">                active_leaf = True</span>
+<span class="sd">                for v, idx, name in zip(value[leaf[&#39;used_idx&#39;]], leaf[&#39;used_idx&#39;], leaf[&#39;used_feat&#39;]):</span>
+<span class="sd">                    if v not in leaf[&#39;variables&#39;][name] and idx in fixed_vars:</span>
+<span class="sd">                        active_leaf=False</span>
+<span class="sd">                        break</span>
+<span class="sd">                if active_leaf:</span>
+<span class="sd">                    bla = leaf[&#39;tree&#39;], leaf[&#39;name&#39;]</span>
+<span class="sd">                    prob = max(prob, leaf[&#39;prediction&#39;])</span>
+<span class="sd">            prediction+=prob</span>
+<span class="sd">        return prediction/n_estimators</span>
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright Visual Data Science Lab
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

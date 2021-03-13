@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Action Set &mdash; Counterfactual Antecedent Mining  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Predictor Wrapper" href="predictors.html" />
+    <link rel="prev" title="Mixed-integer algorithms" href="mip_algorithms.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Counterfactual Antecedent Mining
+          
+
+          
+            
+            <img src="_static/vds.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Algorithms:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Model-agnostic algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mip_algorithms.html">Mixed-integer algorithms</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Processes organization:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Action Set</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#action-set-classes">Action Set classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="predictors.html">Predictor Wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="criteria.html">Criteria</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Visualization:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="visualization.html">Visualization tools</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Summary:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="summary.html">Summary</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Counterfactual Antecedent Mining</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Action Set</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/actions_set.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="action-set">
+<h1>Action Set<a class="headerlink" href="#action-set" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="action-set-classes">
+<h2>Action Set classes<a class="headerlink" href="#action-set-classes" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="cfmining.action_set.ActionSet">
+<em class="property">class </em><code class="sig-prename descclassname">cfmining.action_set.</code><code class="sig-name descname">ActionSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/action_set.html#ActionSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.action_set.ActionSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Container of ActionElement for each variable in a dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – pandas.DataFrame containing features as columns and samples as rows (must contain at least 1 row and 1 column)</p></li>
+<li><p><strong>X</strong> – numpy matrix containing features as columns and samples as rows  (must contain at least 1 row and 1 column)</p></li>
+<li><p><strong>names</strong> – list of strings containing variable names when X is array-like</p></li>
+<li><p><strong>custom_bounds</strong> – dictionary of custom bounds</p></li>
+<li><p><strong>default_bounds</strong> – tuple containing information for default bounds
+- (lb, ub, type) where type = ‘percentile’ or ‘absolute’;
+- (lb, ub)  if type is omitted, it is assumed to be ‘absolute’</p></li>
+<li><p><strong>default_step_type</strong> – </p></li>
+<li><p><strong>print_flag</strong> – set to True to print a table with the ActionSet as _repr_</p></li>
+<li><p><strong>check_flag</strong> – set to True to check for internal errors</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="cfmining.action_set._ActionElement">
+<em class="property">class </em><code class="sig-prename descclassname">cfmining.action_set.</code><code class="sig-name descname">_ActionElement</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">values</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">variable_type</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mutable</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">splits</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">step_type</span><span class="o">=</span><span class="default_value">'relative'</span></em>, <em class="sig-param"><span class="n">step_direction</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">step_size</span><span class="o">=</span><span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cfmining/action_set.html#_ActionElement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cfmining.action_set._ActionElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal class to store the properties of actions in each dimension. Used by ActionSet.</p>
+<p>Represent and manipulate feasible actions for a single feature</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – name of the variable (at least 1 character)</p></li>
+<li><p><strong>values</strong> – values of the variable (must be non-empty, non-nan, finite)</p></li>
+<li><p><strong>bounds</strong> – bounds (must be a tuple of the form (lb, ub) or (lb, ub, bound_type) where bound_type is a valid bound type</p></li>
+<li><p><strong>variable_type</strong> – ‘int’ / ‘float’ / set to None (default) to determine automatically from values</p></li>
+<li><p><strong>step_direction</strong> – +1 or -1 or variable can only increase or decrease</p></li>
+<li><p><strong>immutable</strong> – boolean to represent whether or not the variable can be changed (True by default)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="predictors.html" class="btn btn-neutral float-right" title="Predictor Wrapper" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="mip_algorithms.html" class="btn btn-neutral float-left" title="Mixed-integer algorithms" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright Visual Data Science Lab
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
