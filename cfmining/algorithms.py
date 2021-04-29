@@ -97,6 +97,12 @@ class MAPOCAM():
                     self.update_solutions(solution)
 
     def update_solutions(self, solution):
+        if not self.recursive:
+            for key in self.calls:
+                if self.compare.greater_than(self.calls[key][0], solution):
+                    del self.calls[key]                   
+                    
+                    
         if self.clean_suboptimal:
             solutions = []
             new_optimal = True
@@ -112,11 +118,6 @@ class MAPOCAM():
             self.solutions += [solution]
                 
     def find_candidates(self, solution=None, size=0, changes=0):
-        #if not self.recursive:
-        #    for old_sol in self.solutions:
-        #        if self.compare.greater_than(solution, old_sol):
-        #            return
-        
         next_idx = self.sequence[size]
         next_name = self.names[next_idx]
         
@@ -160,7 +161,7 @@ class MAPOCAM():
             else:
                 self.idd+=1
                 #self.calls[(self.d-changes+new_proba, self.idd)] = (new_solution, new_size, new_changes)
-                self.calls[(new_proba, self.idd)] = (new_solution, new_size, new_changes)
+                self.calls[(new_proba, self.idd)] = [new_solution, new_size, new_changes]
 
             
         
@@ -172,7 +173,7 @@ class MAPOCAM():
              self.find_candidates(self.pivot.copy(), 0, 0)
         else:
             self.idd = 0
-            self.calls = SortedDict({(self.clf.predict_proba(self.pivot), 0):(self.pivot.copy(), 0, 0)})
+            self.calls = SortedDict({(self.clf.predict_proba(self.pivot), 0):[self.pivot.copy(), 0, 0]})
             while(len(self.calls)>0):
                 #print([key[0] for key in self.calls])
                 _, call = self.calls.popitem()
@@ -508,6 +509,7 @@ class BruteForce(MAPOCAM):
         return self
 
     def recursive_fit(self, solution=None, size=0, changes=0):
+        self.recursive = True
         if solution is None:
             solution = self.pivot.copy()
         else:
