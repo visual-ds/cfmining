@@ -66,7 +66,6 @@ class MAPOCAM():
         assert type(pivot) is np.ndarray, 'pivot should be a numpy array'
         self.pivot = pivot
         
-        self.sequence = np.argsort(classifier.feat_importance)[::-1]
         self.feat_direction = np.array([action_set[feat_name].flip_direction
                                         for feat_name in self.names])
 
@@ -75,6 +74,12 @@ class MAPOCAM():
                           for feat_name, flip_dir in zip(self.names, self.feat_direction)}
         self.max_action = np.array([max(self.feas_grid[feat_name]) if flip_dir==1 else min(self.feas_grid[feat_name])
                                     for feat_name, flip_dir in zip(self.names, self.feat_direction)])
+        
+        #delta_action = np.array([max(self.feas_grid[feat_name]) - min(self.feas_grid[feat_name])
+        #                            for feat_name, flip_dir in zip(self.names, self.feat_direction)])
+        #action_range = abs(self.max_action - self.pivot)/(delta_action+(delta_action==0))
+        self.sequence = np.argsort(classifier.feat_importance)[::-1]
+        #self.sequence = np.argsort(classifier.feat_importance*action_range)[::-1]
         
         
         if compare is None:
@@ -88,7 +93,7 @@ class MAPOCAM():
             for old_sol in warm_solutions:
                 solution = self.feat_direction*np.maximum(self.feat_direction*old_sol,
                                                           self.feat_direction*pivot)
-                if self.clf.predict(solution):
+                if self.clf.predict_proba(solution)>=self.clf.threshold-self.eps:
                     self.update_solutions(solution)
 
     def update_solutions(self, solution):
@@ -107,10 +112,10 @@ class MAPOCAM():
             self.solutions += [solution]
                 
     def find_candidates(self, solution=None, size=0, changes=0):
-        if not self.recursive:
-            for old_sol in self.solutions:
-                if self.compare.greater_than(solution, old_sol):
-                    return
+        #if not self.recursive:
+        #    for old_sol in self.solutions:
+        #        if self.compare.greater_than(solution, old_sol):
+        #            return
         
         next_idx = self.sequence[size]
         next_name = self.names[next_idx]
@@ -129,6 +134,7 @@ class MAPOCAM():
             new_proba = self.clf.predict_proba(new_solution)
             
             if new_proba>=self.clf.threshold-self.eps:
+                #print('found', new_proba)
                 self.update_solutions(new_solution)
                 return
 
@@ -141,12 +147,11 @@ class MAPOCAM():
             if self.clf.monotone:
                 max_sol = self.max_action.copy()
                 max_sol[self.sequence[:new_size]] = new_solution[self.sequence[:new_size]]
-                if not self.clf.predict(max_sol):
+                if self.clf.predict_proba(max_sol)<self.clf.threshold-self.eps:
                     continue 
             
             if hasattr(self.clf, 'predict_max') and self.clf.use_predict_max:
                 max_prob = self.clf.predict_max(new_solution, self.sequence[:new_size])
-                #print(next_name, max_prob, self.clf.threshold)
                 if max_prob<self.clf.threshold:
                     continue 
                 
@@ -163,11 +168,15 @@ class MAPOCAM():
         """
         Find counterfactual antecedent given the data.
         """
-        self.idd = 0
-        self.calls = SortedDict({self.clf.predict_proba(self.pivot):(self.pivot.copy(), 0, 0)})
-        while(len(self.calls)>0):
-            _, call = self.calls.popitem()
-            self.find_candidates(*call)
+        if self.recursive:
+             self.find_candidates(self.pivot.copy(), 0, 0)
+        else:
+            self.idd = 0
+            self.calls = SortedDict({(self.clf.predict_proba(self.pivot), 0):(self.pivot.copy(), 0, 0)})
+            while(len(self.calls)>0):
+                #print([key[0] for key in self.calls])
+                _, call = self.calls.popitem()
+                self.find_candidates(*call)
         
         solutions = []
         for i,solution in enumerate(self.solutions):

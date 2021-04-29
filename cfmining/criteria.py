@@ -34,7 +34,7 @@ class PercentileCalculator():
             self.names = self.action_set.df['name'].values
         self.percentile_vec = np.vectorize(self.percentile)
     
-    @functools.lru_cache(maxsize=1024)
+    @functools.lru_cache(maxsize=20*1024)
     def percentile(self, value, feature):
         """Calculates the percentile."""
         if self.method=='ustun':
@@ -42,7 +42,8 @@ class PercentileCalculator():
 
     def percVec(self, vec):
         #return self.percentile_vec(vec, self.names)
-        return np.array([self.percentile(value, feature) for feature, value in zip(self.names, vec)])
+        #return np.array([self.percentile(value, feature) for feature, value in zip(self.names, vec)])
+        return np.fromiter(map(self.percentile, vec, self.names), dtype='float')
 
 class PercentileCriterion():
     """Class that using the percentile calculator is capable of defining
@@ -63,7 +64,8 @@ class PercentileCriterion():
     
     def f(self, solution):
         solutionP = self.perc_calc.percVec(solution)
-        return abs(solutionP-self.pivotP).max()
+        #return abs(solutionP-self.pivotP).max()
+        return max(map(abs, solutionP-self.pivotP))
     
     def greater_than(self, new_sol, old_sol):
         """Order two solutions."""
