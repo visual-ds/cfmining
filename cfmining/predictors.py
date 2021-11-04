@@ -64,7 +64,7 @@ class GeneralClassifier():
                 return roc_auc_score(y, clf.predict_proba(X)[:,1])
             else:
                 return metric(y, clf.predict_proba(X)[:,1])
-        perm = PermutationImportance(self.clf, scoring=deviat).fit(X, y)
+        perm = PermutationImportance(self.clf, scoring=deviat, n_iter=10).fit(X, y)
         #perm = PermutationImportance(self.clf, scoring=deviat).fit(X, classifier.predict_proba(X)[:,1])
         self.importances = abs(perm.feature_importances_)
 
@@ -135,6 +135,7 @@ class LinearClassifier():
             try:
                 coeficients = self.clf['clf'].coef_[0]/self.clf['std'].scale_
             except KeyError:
+                print('sdadsa')
                 coeficients = self.clf['clf'].coef_[0]
         else:
             coeficients = self.clf.coef_[0]

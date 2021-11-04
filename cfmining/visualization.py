@@ -145,8 +145,8 @@ class PlotCounterfactuals():
         else:
             return str(round(v,self.apx))
         
-    def show(self, path=None):
-        plt.rcParams['axes.prop_cycle'] = cycler(color=sns.color_palette('deep', 20))
+    def show(self, path=None, hl_column=[], hl_row=[], bbox_to_anchor=(-0.01,0)):
+        plt.rcParams['axes.prop_cycle'] = cycler(color=sns.color_palette('pastel', 20))
         plt.rcParams["figure.figsize"] = np.array(self.actions.shape)[::-1]*0.5
         self.fig, self.ax = plt.subplots()
         for i in range(1, self.W):
@@ -164,8 +164,15 @@ class PlotCounterfactuals():
         self.ax.add_line(l)
         rect = Rectangle((-0.5,-0.5),1,self.H,linewidth=0, edgecolor='k',facecolor='gainsboro')
         self.ax.add_patch(rect)
+        for hl in hl_column:
+            rect = Rectangle((-0.46+hl,-0.46),0.9,self.H-0.1, linewidth=1, linestyle='--', edgecolor='k', alpha=1, facecolor='none')
+            self.ax.add_patch(rect)
+            
+        for hl in hl_row:
+            rect = Rectangle((-0.46,-0.46+hl),self.W-0.1, 0.9, linewidth=1, linestyle='--', edgecolor='k', alpha=1, facecolor='none')
+            self.ax.add_patch(rect)
         
-        self.ax.legend(title = 'Feature names', loc='lower right', handletextpad=1,  borderaxespad=0.0 , bbox_to_anchor=(-0.1/self.W, 0.0), fancybox=True, labelspacing=1.65, borderpad=1)
+        self.ax.legend(title = 'Feature names', loc='lower right', handletextpad=1,  borderaxespad=0.0 , bbox_to_anchor=bbox_to_anchor, fancybox=True, labelspacing=1.68, borderpad=1)
         self.ax.set_aspect('equal')
         
         plt.xticks(np.arange(self.W), ['Orig']+['C'+str(i) for i in range(1,self.W)])
