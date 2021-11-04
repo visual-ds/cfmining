@@ -494,7 +494,7 @@ class _ActionElement(object):
     @flip_direction.setter
     def flip_direction(self, flip_direction):
         assert np.isfinite(flip_direction), "flip_direction must be finite"
-        self._flip_direction = int(np.sign(flip_direction))
+        self._flip_direction = int(1 if flip_direction>=0 else -1)
 
     #### methods ####
 
