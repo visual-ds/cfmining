@@ -10,3 +10,5 @@ The experiments with crime are not available because of data availability.
 To install this library you should be in the same folder as this file and do:
 
 pip install .
+
+Further detais about documentation can be viewed in docs folder.
