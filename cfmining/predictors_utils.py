@@ -190,11 +190,13 @@ class TreeExtractor():
             self.n_estimators = len(self.estimators)
             self.forest = [extract_lightgbm(self.clf, tree_['tree_structure'], grid, tree_name=i)
                                 for i, tree_ in enumerate(self.estimators)]
+        self.lowest_value = np.inf
         for tree in self.forest:
             for leaf in tree:
                 vars_ = sorted(leaf['variables'], key=lambda var: len(leaf['variables'][var])/len(grid[var]))
                 leaf['variables'] = {var:set(leaf['variables'][var]) for var in vars_}
                 leaf['used_features'] = list(leaf['used_features'])
+                self.lowest_value = min(self.lowest_value, leaf['prediction'])
         if return_forest:
             return self.forest
 '''

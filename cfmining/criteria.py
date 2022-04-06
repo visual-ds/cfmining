@@ -34,7 +34,8 @@ class PercentileCalculator():
             self.names = self.action_set.df['name'].values
         self.percentile_vec = np.vectorize(self.percentile)
     
-    @functools.lru_cache(maxsize=20*1024)
+    #@functools.lru_cache(maxsize=20*1024)
+    @functools.lru_cache(maxsize=None)
     def percentile(self, value, feature):
         """Calculates the percentile."""
         if self.method=='ustun':

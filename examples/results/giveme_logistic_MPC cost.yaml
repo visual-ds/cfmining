@@ -1,0 +1,9 @@
+Best solution rate:
+  MAPOCAM: 1.0
+  greedy: 0.16666666666666666
+  mi-logistic: 1.0
+Feasible rate: 1.0
+Time performance:
+  MAPOCAM: 0.0042059649907362955
+  greedy: 0.01619346625655173
+  mi-logistic: 0.017176882581761442

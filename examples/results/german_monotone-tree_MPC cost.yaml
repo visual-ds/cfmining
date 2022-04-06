@@ -1,0 +1,13 @@
+Best solution rate:
+  MAPOCAM-M: 0.56
+  MAPOCAM-N: 0.56
+  MAPOCAM-P: 0.56
+  greedy: 0.36
+  mi-trees: 1.0
+Feasible rate: 1.0
+Time performance:
+  MAPOCAM-M: 0.060772618285845965
+  MAPOCAM-N: 1.37852075467119
+  MAPOCAM-P: 1.352057008163538
+  greedy: 0.016513799999374898
+  mi-trees: 0.028941073974128814

@@ -1,0 +1,8 @@
+Best solution rate:
+  MAPOCAM: 1.0
+  brute-force: 1.0
+  po-mi-logistic: 1.0
+Time performance:
+  MAPOCAM: 0.051627026151188395
+  brute-force: 1.7840174908077726
+  po-mi-logistic: 0.02604131725225174

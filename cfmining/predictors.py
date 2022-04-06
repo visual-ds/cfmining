@@ -182,6 +182,10 @@ class LinearRule():
             return True
         else:
             return False
+            
+    def predict_proba(self, value):
+        """Predicts if the probability is higher than threshold"""
+        return self.coef@value
 
 from cfmining.predictors_utils import TreeExtractor
 
@@ -221,14 +225,15 @@ class TreeClassifier(GeneralClassifier, TreeExtractor):
 
     def fit(self, individual, action_set):
         self.names = list(action_set.df['name'])
-        grid_ = action_set.feasible_grid(individual, return_actions=False, return_percentiles=False, return_immutable=True)
+        grid_ = action_set.feasible_grid(individual, return_actions=False,
+                                         return_percentiles=False, return_immutable=True)
         grid_ = {idx:grid_[name] for idx, name in enumerate(grid_)}
         self.extract_tree(grid_)
 
     def predict_proba(self, value):
         """Calculates probability of achieving desired classification."""
         n_estimators = len(self.forest)
-        prediction = 0
+        prediction = self.lowest_value
         for leaves_tree in self.forest:
             for leaf in leaves_tree:
                 for v, name in zip(value[leaf['used_features']], leaf['used_features']):
@@ -242,13 +247,31 @@ class TreeClassifier(GeneralClassifier, TreeExtractor):
         elif self.clf_type=='lightgbm':
             return 1/(1+np.exp(-prediction))
 
+    def predict_max_(self, value, fixed_vars):
+        """Calculates the maximal probability of a optimization branch."""
+        n_estimators = len(self.forest)
+        prediction = 0
+        for leaves_tree in self.forest:
+            prob = -np.inf
+            for leaf in leaves_tree:
+                for v, name in zip(value[fixed_vars], fixed_vars):
+                    if v not in leaf['variables'][name]:
+                        break
+                else:
+                    prob = max(prob, leaf['prediction'])
+            prediction+=prob
+        if self.clf_type=='sklearn':
+            return prediction/self.n_estimators
+        elif self.clf_type=='lightgbm':
+            return 1/(1+np.exp(-prediction))
+
     def predict_max(self, value, fixed_vars):
         """Calculates the maximal probability of a optimization branch."""
         fixed = set(fixed_vars)
         n_estimators = len(self.forest)
         prediction = 0
         for leaves_tree in self.forest:
-            prob = 0
+            prob = -np.inf
             for leaf in leaves_tree:
                 feat_u = list(fixed.intersection(leaf['used_features']))
                 for v, name in zip(value[feat_u], feat_u):

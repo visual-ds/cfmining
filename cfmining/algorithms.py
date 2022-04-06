@@ -54,7 +54,7 @@ class MAPOCAM():
     eps = 0.0000001
     def __init__(self, action_set, pivot, 
                  classifier, max_changes = 3, compare=None,
-                 clean_suboptimal=False, warm_solutions=None,
+                 clean_suboptimal=True, warm_solutions=None,
                  recursive = False):        
         self.names = list(action_set.df['name'])
         self.d = len(self.names)
@@ -69,7 +69,8 @@ class MAPOCAM():
         self.feat_direction = np.array([action_set[feat_name].flip_direction
                                         for feat_name in self.names])
 
-        action_grid = action_set.feasible_grid(pivot, return_percentiles=False, return_actions=False, return_immutable=True)
+        action_grid = action_set.feasible_grid(pivot, return_percentiles=False,
+                                               return_actions=False, return_immutable=True)
         self.feas_grid = {feat_name:action_grid[feat_name][::flip_dir]
                           for feat_name, flip_dir in zip(self.names, self.feat_direction)}
         self.max_action = np.array([max(self.feas_grid[feat_name]) if flip_dir==1 else min(self.feas_grid[feat_name])
@@ -106,14 +107,21 @@ class MAPOCAM():
         if self.clean_suboptimal:
             solutions = []
             new_optimal = True
-            for old_sol in self.solutions:
+            self.keep_solutions = np.ones(len(self.solutions))
+            for idx, old_sol in enumerate(self.solutions):
                 old_better = self.compare.greater_than(solution, old_sol)
                 new_better = self.compare.greater_than(old_sol, solution)
-                if old_better or not new_better:
-                    solutions += [old_sol]
-                new_optimal = new_optimal and not old_better
+                if new_better and not old_better:
+                    self.keep_solutions[idx]=0
+                if old_better:
+                    new_optimal = False
+                    #print('sda')
+                    break
+                #new_optimal = new_optimal and not old_better
+            self.solutions = [old_sol for idx, old_sol in enumerate(self.solutions)
+                              if self.keep_solutions[idx]==1]
             if new_optimal:
-                self.solutions = solutions+[solution]
+                self.solutions += [solution]
         else:
             self.solutions += [solution]
                 
@@ -135,7 +143,6 @@ class MAPOCAM():
             new_proba = self.clf.predict_proba(new_solution)
             
             if new_proba>=self.clf.threshold-self.eps:
-                #print('found', new_proba)
                 self.update_solutions(new_solution)
                 return
 
@@ -148,12 +155,12 @@ class MAPOCAM():
             if self.clf.monotone:
                 max_sol = self.max_action.copy()
                 max_sol[self.sequence[:new_size]] = new_solution[self.sequence[:new_size]]
-                if self.clf.predict_proba(max_sol)<self.clf.threshold-self.eps:
+                if self.clf.predict_proba(max_sol)<self.clf.threshold:
                     continue 
             
             if hasattr(self.clf, 'predict_max') and self.clf.use_predict_max:
                 max_prob = self.clf.predict_max(new_solution, self.sequence[:new_size])
-                if max_prob<self.clf.threshold:
+                if max_prob<self.clf.threshold-self.eps:
                     continue 
                 
             if self.recursive:
@@ -179,17 +186,18 @@ class MAPOCAM():
                 _, call = self.calls.popitem()
                 self.find_candidates(*call)
         
-        solutions = []
-        for i,solution in enumerate(self.solutions):
-            optimal = True
-            for j,comp_sol in enumerate(self.solutions):
-                if self.compare.greater_than(solution, comp_sol):
-                    if i<j or not self.compare.greater_than(comp_sol, solution):
-                        optimal = False
-                        break
-            if optimal:
-                solutions += [solution]
-        self.solutions = solutions
+        if not self.clean_suboptimal:
+            solutions = []
+            for i,solution in enumerate(self.solutions):
+                optimal = True
+                for j,comp_sol in enumerate(self.solutions):
+                    if self.compare.greater_than(solution, comp_sol):
+                        if i<j or not self.compare.greater_than(comp_sol, solution):
+                            optimal = False
+                            break
+                if optimal:
+                    solutions += [solution]
+            self.solutions = solutions
         
         return self
 
@@ -493,7 +501,11 @@ class BruteForce(MAPOCAM):
         """
         Find counterfactual antecedents given the data.
         """
+        #print('test')
+        self.clean_suboptimal = True
+        self.recursive = True
         self.recursive_fit()
+        '''
         solutions = []
         for i,solution in enumerate(self.solutions):
             optimal = True
@@ -504,12 +516,12 @@ class BruteForce(MAPOCAM):
                         break
             if optimal:
                 solutions += [solution]
-        self.solutions = solutions
+        '''
+        #self.solutions = solutions
         
         return self
 
     def recursive_fit(self, solution=None, size=0, changes=0):
-        self.recursive = True
         if solution is None:
             solution = self.pivot.copy()
         else:
