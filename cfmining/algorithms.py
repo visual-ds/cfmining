@@ -101,8 +101,7 @@ class MAPOCAM():
         if not self.recursive:
             for key in self.calls:
                 if self.compare.greater_than(self.calls[key][0], solution):
-                    del self.calls[key]                   
-                    
+                    del self.calls[key]
                     
         if self.clean_suboptimal:
             solutions = []
@@ -155,12 +154,12 @@ class MAPOCAM():
             if self.clf.monotone:
                 max_sol = self.max_action.copy()
                 max_sol[self.sequence[:new_size]] = new_solution[self.sequence[:new_size]]
-                if self.clf.predict_proba(max_sol)<self.clf.threshold:
+                if self.clf.predict_proba(max_sol)<self.clf.threshold-self.eps:
                     continue 
             
             if hasattr(self.clf, 'predict_max') and self.clf.use_predict_max:
                 max_prob = self.clf.predict_max(new_solution, self.sequence[:new_size])
-                if max_prob<self.clf.threshold-self.eps:
+                if max_prob<self.clf.threshold:
                     continue 
                 
             if self.recursive:
@@ -501,23 +500,9 @@ class BruteForce(MAPOCAM):
         """
         Find counterfactual antecedents given the data.
         """
-        #print('test')
         self.clean_suboptimal = True
         self.recursive = True
         self.recursive_fit()
-        '''
-        solutions = []
-        for i,solution in enumerate(self.solutions):
-            optimal = True
-            for j,comp_sol in enumerate(self.solutions):
-                if self.compare.greater_than(solution, comp_sol):
-                    if i<j or not self.compare.greater_than(comp_sol, solution):
-                        optimal = False
-                        break
-            if optimal:
-                solutions += [solution]
-        '''
-        #self.solutions = solutions
         
         return self
 

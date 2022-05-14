@@ -1,0 +1,12 @@
+Best solution rate:
+  MAPOCAM-N: 1.0
+  MAPOCAM-P: 1.0
+  greedy: 0.38461538461538464
+  mi-trees: 1.0
+Feasible rate: 1.0
+Number of combinations: 228926250
+Time performance:
+  MAPOCAM-N: 5.422091830280037
+  MAPOCAM-P: 0.489022449303705
+  greedy: 0.02388377456764619
+  mi-trees: 0.03523080550187912

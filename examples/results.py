@@ -9,12 +9,12 @@ def save_result(values, dataset, experiment, moo, show=True):
     if show:
         print(yaml.dump(values, default_flow_style=False))
     
-    with open('results/'+'_'.join([dataset, experiment, moo])+'.yaml', 'w') as outfile:
+    with open('results/cache/'+'_'.join([dataset, experiment, moo])+'.yaml', 'w') as outfile:
         yaml.dump(values, outfile, default_flow_style=False)
         
         
 def open_result(dataset, experiment, moo):
-    with open('results/+''_'.join([dataset, experiment, moo])+'.yaml', 'r') as f:
+    with open('results/cache/+''_'.join([dataset, experiment, moo])+'.yaml', 'r') as f:
         data = yaml.load_all(f, Loader=yaml.SafeLoader)
     return data
     

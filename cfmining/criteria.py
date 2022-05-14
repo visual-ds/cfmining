@@ -7,6 +7,63 @@
 
 import numpy as np
 import functools
+import xxhash
+
+def np_cache_xxhash(*args, **kwargs):
+    """LRU cache implementation for functions whose FIRST parameter is a numpy array
+    >>> array = np.array([[1, 2, 3], [4, 5, 6]])
+    >>> @np_cache(maxsize=256)
+    ... def multiply(array, factor):
+    ...     print("Calculating...")
+    ...     return factor*array
+    >>> multiply(array, 2)
+    Calculating...
+    array([[ 2,  4,  6],
+           [ 8, 10, 12]])
+    >>> multiply(array, 2)
+    array([[ 2,  4,  6],
+           [ 8, 10, 12]])
+    >>> multiply.cache_info()
+    CacheInfo(hits=1, misses=1, maxsize=256, currsize=1)
+    
+    """
+    def decorator(function):
+        np_array_aux = None
+        method_class = None
+        @functools.wraps(function)
+        def wrapper(*args, **kwargs):
+            nonlocal np_array_aux
+            nonlocal method_class
+            
+            if len(args)==1:
+                np_array = args[0]
+                args = ()
+            elif len(args)==2:
+                np_array = args[1]
+                method_class = args[0]
+                args = ()
+                
+            np_array_aux = np_array
+            hashable_array = xxhash.xxh32(np_array).hexdigest()
+            #if method_class is not None:
+            #    hashable_array += xxhash.xxh32(method_class.pivot).hexdigest()
+            return cached_wrapper(hashable_array, *args, **kwargs)
+
+        @functools.lru_cache(*args, **kwargs)
+        def cached_wrapper(hashable_array, *args, **kwargs):
+            nonlocal np_array_aux
+            nonlocal method_class
+            result = function(method_class, np_array_aux,
+                              *args, **kwargs)
+            return result
+
+        # copy lru_cache attributes over too
+        wrapper.cache_info = cached_wrapper.cache_info
+        wrapper.cache_clear = cached_wrapper.cache_clear
+
+        return wrapper
+
+    return decorator
 
 class PercentileCalculator():
     """Class that is capable of calculating the percentile cost
@@ -59,10 +116,12 @@ class PercentileCriterion():
         Percentile calculator for that set of samples.     
     """
     def __init__(self, pivot, perc_calc):
-        self.pivot = pivot
+        self.pivot = np.ascontiguousarray(pivot)
         self.perc_calc = perc_calc     
         self.pivotP = self.perc_calc.percVec(pivot)
+        #self.f.cache_clear()
     
+    #@np_cache_xxhash(maxsize=None)
     def f(self, solution):
         solutionP = self.perc_calc.percVec(solution)
         #return abs(solutionP-self.pivotP).max()
@@ -87,6 +146,7 @@ class PercentileChangesCriterion(PercentileCriterion):
     perc_calc : PercentileCalculator class,
         Percentile calculator for that set of samples.     
     """
+    #@np_cache_xxhash(maxsize=None)
     def f(self, solution):
         perc = super(PercentileChangesCriterion, self).f(solution)
         changes = sum(solution!=self.pivot)

@@ -1,0 +1,10 @@
+Best solution rate:
+  MAPOCAM-N: 1.0
+  MAPOCAM-P: 1.0
+  brute-force: 1.0
+  po-mi-trees: 1.0
+Time performance:
+  MAPOCAM-N: 0.05204049225078982
+  MAPOCAM-P: 0.034732106531602004
+  brute-force: 0.1515933433750666
+  po-mi-trees: 0.023858571500885627

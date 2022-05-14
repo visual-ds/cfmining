@@ -233,7 +233,7 @@ class TreeClassifier(GeneralClassifier, TreeExtractor):
     def predict_proba(self, value):
         """Calculates probability of achieving desired classification."""
         n_estimators = len(self.forest)
-        prediction = self.lowest_value
+        prediction = 0
         for leaves_tree in self.forest:
             for leaf in leaves_tree:
                 for v, name in zip(value[leaf['used_features']], leaf['used_features']):
@@ -252,7 +252,7 @@ class TreeClassifier(GeneralClassifier, TreeExtractor):
         n_estimators = len(self.forest)
         prediction = 0
         for leaves_tree in self.forest:
-            prob = -np.inf
+            prob = self.lowest_value
             for leaf in leaves_tree:
                 for v, name in zip(value[fixed_vars], fixed_vars):
                     if v not in leaf['variables'][name]:
