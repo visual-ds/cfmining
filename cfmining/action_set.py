@@ -413,6 +413,9 @@ class _ActionElement(object):
         stop = self.ub
         step = self.step_size
 
+        if stop - start == 0:
+            return
+
         if self._variable_type == int:
             start = np.floor(self.lb)
             stop = np.ceil(self.ub)
